@@ -48,20 +48,18 @@ def signup_api():
                 })
             
             print(res.user.id, "\n")
-            print(supabase.auth.user(), "\n")
+            # print(supabase.auth.user(), "\n")
             if len(res.user.id) > 0:
                 
                 user = res.user.id
-                
+                print(f'this is the user id {user}')
                 # session = res.session
-                res = supabase.table('profile').insert({
-                    # 'id': user,
+                response = supabase.table('profile').insert({
+                    'id': user,
                     'name': name,
                     'genre': genre,
                     'phone_number': phone_number,
-                    'location': location,
-
-                }).execute()
+                    'location': location}).execute()
                 print("we got afer the insert profile")
 
 
@@ -76,11 +74,11 @@ def signup_api():
 
 
             # flash(f'You have successfully created a user account {email}', 'User-created')
-            return None
+            return user
    
     except Exception as e:
        
-       return jsonify({'message': f'There is a problem with your sign up information. ${e}'}), 401
+       return jsonify({'message': f'There is a problem with your sign up information. {type(e).__name__}: ${e}'}), 401
     return signup_api
 
 @auth.route('/signin', methods = ['GET', 'POST'])
