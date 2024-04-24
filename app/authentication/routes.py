@@ -90,10 +90,13 @@ def signin():
             email = request.json["email"]
             password = request.json["password"]
             print(email)
-            supabase.auth.sign_in_with_password({
+            ret = supabase.auth.sign_in_with_password({
                 'email': email,
                 'password': password
             })
+            user_id = ret.user.id
+
+            print(user_id)
             # logged_user = User.query.filter(User.email == email).first()
           
             # if check_password_hash(logged_user.password, password):
@@ -104,7 +107,7 @@ def signin():
                 
                 # user_id = session.get("user_id")
             # print("this is the user id", user_id)
-            return "success"
+            return user_id
             # else:
             #     return jsonify({'message': 'There is a problem with your login information.'}), 401
     except Exception as e:
