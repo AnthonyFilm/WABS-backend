@@ -31,6 +31,7 @@ def signup_api():
             genre = request.json["genre"]
             phone_number = request.json["phone_number"]
             location = request.json["location"]
+            profile_pic_url = request.json["profile_pic_url"]
 
  
      
@@ -59,7 +60,8 @@ def signup_api():
                     'name': name,
                     'genre': genre,
                     'phone_number': phone_number,
-                    'location': location}).execute()
+                    'location': location,
+                    'profile_pic_url': profile_pic_url}).execute()
                 print("we got afer the insert profile")
 
 
