@@ -4,7 +4,7 @@ from flask import Flask
 from config import Config
 # from .site.routes import site
 from .authentication.routes import auth
-# from .api.routes import api
+from .api.routes import api
 # from .dreamapi.routes import dreamobjects
 
 # from flask_sqlalchemy import SQLAlchemy
@@ -25,7 +25,7 @@ CORS(app, supports_credentials=True)
 
 # app.register_blueprint(site)
 app.register_blueprint(auth)
-# app.register_blueprint(api)
+app.register_blueprint(api)
 # app.register_blueprint(dreamobjects)
 
 # app.json_encoder = JSONEncoder

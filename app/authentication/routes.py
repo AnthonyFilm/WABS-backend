@@ -103,9 +103,9 @@ def signin():
                 'email': email,
                 'password': password
             })
-            user_id = ret.user.id
+            user = ret.user
 
-            print(user_id)
+            
             # logged_user = User.query.filter(User.email == email).first()
           
             # if check_password_hash(logged_user.password, password):
