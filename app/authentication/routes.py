@@ -1,6 +1,6 @@
 
 # from models import User, db, check_password_hash
-from flask import Blueprint, request, redirect, url_for, flash, jsonify, session
+from flask import Blueprint, request, redirect, url_for, flash, jsonify, session,json
 # from werkzeug.security import generate_password_hash, check_password_hash
 # from helpers import createBucket
 
@@ -25,13 +25,16 @@ def home():
 def signup_api():
     try:
         if request.method == 'POST':
-            email_entered = request.json["email"]
-            password = request.json["password"]
-            name = request.json["name"]
-            genre = request.json["genre"]
-            phone_number = request.json["phone_number"]
-            location = request.json["location"]
-            profile_pic_url = request.json["profile_pic_url"]
+            print('before')
+            email_entered =request.form.get("email")
+            password = request.form.get("password")
+            name = request.form.get("name")
+   
+            genre = request.form.get("genre")
+            phone_number = request.form.get("phone_number")
+            location = request.form.get("location")
+            print('after')
+            
 
  
      
@@ -47,16 +50,33 @@ def signup_api():
                         'email': email_entered,
                         'password': password,
                 })
-            
-            print(res.user.id, "\n")
+            user_id = res.user.id
+            print(user_id, "\n")
             # print(supabase.auth.user(), "\n")
             if len(res.user.id) > 0:
+                if 'profile_pic' in request.files:
+                    photo = request.files['profile_pic']
+                    filename = res.user.id + photo.filename.replace(" ", "")  # Always sanitize filenames
+                    filepath = os.path.join('/tmp', filename)
+                    photo.save(filepath)
+                    print('after file save')
+                    # Directly upload to Supabase Storage
+                    with open(filepath, 'rb') as f:
+                        print(filepath)
+                        print(f)
+                        response = supabase.storage.from_('profile-pic').upload(file=f, path=filename, file_options={"content-type": "image/*"})
+                        print(response)
+                    # upload_result = supabase.storage().from_('profile-pic').upload(filename, photo)
+                    print('after upload')
+                    profile_pic_url = supabase.storage.from_('profile-pic').get_public_url(filename)
+                    print(profile_pic_url)
+                    print('after get public url')
                 
-                user = res.user.id
-                print(f'this is the user id {user}')
+                
+                print(f'this is the user id {user_id}')
                 # session = res.session
                 response = supabase.table('profile').insert({
-                    'id': user,
+                    'id': user_id,
                     'name': name,
                     'genre': genre,
                     'phone_number': phone_number,
@@ -64,19 +84,8 @@ def signup_api():
                     'profile_pic_url': profile_pic_url}).execute()
                 print("we got afer the insert profile")
 
-
-            
-            # user = User(email, first_name, last_name, password=password)
-
-            # db.session.add(user)
-            # db.session.commit()
-
-            # createBucket(user.id)
             print("we got here")
-
-
-            # flash(f'You have successfully created a user account {email}', 'User-created')
-            return user
+            return response
    
     except Exception as e:
        
@@ -107,7 +116,7 @@ def signin():
                 
                 # user_id = session.get("user_id")
             # print("this is the user id", user_id)
-            return user_id
+            return ret
             # else:
             #     return jsonify({'message': 'There is a problem with your login information.'}), 401
     except Exception as e:
