@@ -85,7 +85,7 @@ def signup_api():
                 print("we got afer the insert profile")
 
             print("we got here")
-            return response.model_dump_json()
+            return response.json()
    
     except Exception as e:
        
@@ -116,7 +116,7 @@ def signin():
                 
                 # user_id = session.get("user_id")
             # print("this is the user id", user_id)
-            return ret.model_dump_json()
+            return ret.json()
             # else:
             #     return jsonify({'message': 'There is a problem with your login information.'}), 401
     except Exception as e:
